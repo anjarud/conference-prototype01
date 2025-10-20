@@ -45,7 +45,7 @@ das in mehreren Browser-Tabs getestet wurde.
 ## Kontakt / Mitwirkende
 
 - [Anja Rudolph]
-- Projekt-Repository: https://github.com/deinname/dein-projekt
+- Projekt-Repository: https://github.com/anjarud/conference-prototype01
 
 ---
 

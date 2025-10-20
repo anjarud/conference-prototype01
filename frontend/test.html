@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Test</title>
+</head>
+<body>
+<h1>WebSocket Test</h1>
+<input id="roomId" placeholder="Raum-ID eingeben" />
+<button onclick="connect()">Verbinden</button>
+<br/><br/>
+<textarea id="messages" cols="50" rows="10" readonly></textarea>
+<br/>
+<input id="inputMessage" placeholder="Nachricht eingeben" />
+<button onclick="sendMessage()">Senden</button>
+
+<script>
+    let ws;
+
+    function connect() {
+        const roomId = document.getElementById("roomId").value.trim();
+        if(!roomId) {
+            altert("Bitte gib eine Raum-ID ein!");
+            return;
+        }
+        console.log("Versuche Verbindung mit Raum-ID:", roomId);
+        ws = new WebSocket(`ws://localhost:8000/ws/${roomId}`);
+
+        ws = new WebSocket(`ws://localhost:8000/ws/${roomId}`);     // wenn lokal am Rechner gestestet wird
+       // ws = new WebSocket(`ws://10.30.11.73:8000/ws/${roomId}`);  // wenn vom handy getestet wird
+
+
+        ws.onopen = () => {
+            appendMessage("Verbindung geöffnet");
+        };
+
+        ws.onmessage = (event) => {
+            appendMessage("Nachricht empfangen: " + event.data);
+        };
+
+        ws.onclose = () => {
+            appendMessage("Verbindung geschlossen");
+        };
+
+        ws.onerror = (err) => {
+            appendMessage("Fehler: " + err.message);
+        };
+    }
+
+    function sendMessage() {
+        const input = document.getElementById("inputMessage");
+        if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(input.value);
+            appendMessage("Nachricht gesendet: " + input.value);
+            input.value = "";
+        }
+    }
+
+    function appendMessage(msg) {
+        const messages = document.getElementById("messages");
+        messages.value += msg + "\n";
+        messages.scrollTop = messages.scrollHeight;
+    }
+</script>
+</body>
+</html>

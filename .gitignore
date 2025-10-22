@@ -1,0 +1,29 @@
+# Node modules
+node_modules/
+
+# Build output
+build/
+dist/
+
+# Umweltvariablen-Dateien
+.env
+.env.local
+
+# SSL/TLS Zertifikate und Schlüssel
+*.pem
+*.key
+
+# Logdateien
+*.log
+
+# Docker lokale Overrides
+docker-compose.override.yml
+
+# VSCode Einstellungen
+.vscode/
+
+# MacOS Systemdateien (optional)
+.DS_Store
+
+# Windows Systemdateien (optional)
+Thumbs.db

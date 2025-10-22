@@ -5,6 +5,12 @@ services:
       context: ./backend
     ports:
       - "8000:8000"
+    volumes:
+      - ./backend/.cert/homeoffice:/etc/ssl/certs
+      #- ./backend/.cert/office:/etc/ssl/certs
+
+
+
   frontend:
     build:
       context: ./frontend
@@ -12,3 +18,6 @@ services:
       - "3000:3000"
     depends_on:
       - backend
+    volumes:
+      - ./frontend/.cert/homeoffice:/etc/ssl/certs
+      #- ./frontend/.cert/office:/etc/ssl/certs

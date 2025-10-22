@@ -1,70 +1,100 @@
-# Getting Started with Create React App
+# Echtzeit-Kommunikationssystem mit WebSockets und WebRTC
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Dieses Projekt ist eine einfache WebSocket-basierte Anwendung, die es ermöglicht,  
+in Echtzeit Nachrichten und Video-Audio-Daten zwischen Browsern auszutauschen. Die Anwendung besteht aus  
+einem Python-Backend (FastAPI + Uvicorn) und einem React-Frontend, das in mehreren Browser-Tabs bzw. verschiedenen Browsern getestet wurde.
 
-## Available Scripts
+## Funktionen bisher
 
-In the project directory, you can run:
+- **Server läuft auf Port 8000** (Backend)
+- **WebSocket-Verbindung** zwischen Browser und Server hergestellt
+- **Nachrichten** werden in Echtzeit zwischen mehreren Clients (zwei Browser-Tabs oder verschiedene Endgeräte) ausgetauscht
+- **React-Frontend** im Browser getestet (mit Eingabefeldern für Raum-ID und Client-IDs)
+- **Zugriff auf die Webcam** und Echtzeit-Videostream im Frontend implementiert
+- **Fehlerbehebung** bei Netzwerk-Problemen und WebRTC-Setup gelöst
+- **Dynamische Clientslisten**, die es jedem Client erlauben auszuhandeln, wer das erste WebRTC-Offer sendet, ohne harte IP- oder ID-Codierungen
+- **Verbesserte WebSocket-CORS-Konfiguration** für mehrere Geräte im lokalen Netz
 
-### `npm start`
+## Setup & Installation
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+1. **Backend starten:**  
+   Stelle sicher, dass dein Virtual Environment aktiv ist, und führe im Projektordner den folgenden Befehl aus:
+    - `uvicorn app.main:app --reload --port 8000`
+    - Das Backend läuft dann unter `http://localhost:8000`.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+   > **Wichtig:** Für den Betrieb mit HTTPS und WebRTC sind eigene SSL-Zertifikate notwendig (z. B. `cert.pem` und `key.pem`). Diese müssen lokal erstellt und in den projektrelevanten Ordnern gespeichert werden. Öffentliche Zertifikate bitte nicht in das Git-Repository hochladen!
 
-### `npm test`
+2. **Frontend starten:**  
+   Navigiere in den Ordner deines React-Frontends (wo die `package.json` liegt) und starte den React-Entwicklungsserver:
+    - `npm start`
+    - Das Frontend ist dann unter `http://localhost:3000` erreichbar und öffnet sich automatisch im Browser.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+3. **Frontend im Browser öffnen:**  
+   Im Browser öffnest du automatisch `http://localhost:3000`.  
+   Dort gibst du eine Raum-ID sowie deine Client- und Peer-IDs ein.
 
-### `npm run build`
+4. **[Troubleshooting: Test auf zwei Geräten]**
+    - Gib die gewünschte Raum-ID ein (z.B. „raum1“).
+    - Gib deine Client-ID (z.B. „1“) und die Peer-Client-ID (z.B. „2“) ein.
+    - Klicke auf „Verbinden“.
+    - Öffne ggf. einen zweiten Browser-Tab oder ein zweites Gerät mit denselben Rauminformationen und vertauschten Client-IDs, um die Peer-to-Peer-Verbindung zu testen.
+    - **Hinweis:** Lokale Tests auf nur einem Gerät mit mehreren Tabs können wegen Kamera-Zugriffsbegrenzungen kein Remote-Video anzeigen. Für verlässliche Tests empfiehlt sich ein zweites physisches Gerät.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+5. **Docker-Variante:**
+    - Du kannst Backend und Frontend auch mit Docker und Docker Compose starten:
+      ```
+      docker-compose down          # Stoppt alle laufenden Container
+      docker-compose up --build    # Baut Images neu und startet Backend (Port 8000) und Frontend (Port 3000)
+      ```
+    - Danach ist das Backend unter `http://localhost:8000` und das Frontend unter `http://localhost:3000` verfügbar (bei Test auf einem Endgerät).
+    - Diese Variante erleichtert den Betrieb besonders in Entwicklungs- und Testumgebungen.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Backend-CORS Einstellung
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- Im Backend in `main.py` wurde die CORS-Konfiguration für `origins` angepasst:
 
-### `npm run eject`
+origins = [
+"http://0.0.0.0:3000",
+"http://0.0.0.0:8080",
+"http://0.0.0.0:8000"
+]
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- Dies erlaubt es mehreren Clients in verschiedenen Netzwerkkontexten (z.B. auf verschiedenen Geräten im lokalen Netz), den Server ohne CORS-Blockaden zu erreichen.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Hinweise
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- Backend und Frontend laufen auf verschiedenen Ports (`8000` für Backend, `3000` für Frontend) und kommunizieren per WebSocket.
+- WebSocket-URL im Frontend wird dynamisch mit `window.location.hostname` gebildet, um statische IPs zu vermeiden.
+- WebRTC Streams werden peer-to-peer übertragen, das Backend dient lediglich zur Signalisierung.
+- Bitte lege eigene SSL-Zertifikate (Eigenzertifikate) an und speichere sie nicht im öffentlichen Repository!
 
-## Learn More
+## README-Aktualisierungen am 22.10.2025
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- Einführung der dynamischen Clientslisten-Aushandlung für WebRTC Offer
+- Verbesserte CORS-Konfiguration für lokalen Mehrgerätebetrieb
+- Trennung von Streamstart und Angebotsaushandlung im React-Frontend
+- Integration von Fehlerbehandlung und sauberen Hooks im Frontend
+- Erinnerung und Anleitung zur Einbindung eigener SSL-Zertifikate
+- `.gitignore` konfiguriert zum Ausschluss sensibler Dateien wie Zertifikate und Umgebungsvariablen
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Nächste Schritte
 
-### Code Splitting
+- Absicherung mit Authentifizierung und Autorisierung
+- Nutzung von TURN-Servern für NAT-Traversal
+- UI-Verbesserung für Media-Steuerung (Mikrofon/Kamera an/aus)
+- Automatisierte Tests für Verbindung und Stream-Qualität
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+---
 
-### Analyzing the Bundle Size
+## Kontakt / Mitwirkende
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+- Anja Rudolph
+- Projekt-Repository: [https://github.com/anjarud/conference-prototype01](https://github.com/anjarud/conference-prototype01)
 
-### Making a Progressive Web App
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+**Hinweis:**  
+Dieses Projekt ist ein aktueller Stand, der für eine WebSocket- und WebRTC-basierte Echtzeit-Kommunikation mit React und FastAPI entwickelt wurde. Weitere Funktionen und Verbesserungen sind geplant.
 
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+  

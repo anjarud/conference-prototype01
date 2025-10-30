@@ -1,23 +1,24 @@
 version: '3.8'
+
 services:
   backend:
     build:
       context: ./backend
+    env_file:
+      - .env
     ports:
       - "8000:8000"
     volumes:
-      - ./backend/.cert/homeoffice:/etc/ssl/certs
-      #- ./backend/.cert/office:/etc/ssl/certs
-
-
+      - ${CERT_PATH}:/etc/ssl/certs
 
   frontend:
     build:
       context: ./frontend
-    ports:
-      - "3000:3000"
+    env_file:
+      - .env
     depends_on:
       - backend
+    ports:
+      - "3000:80"   #Nginx hört auf Port 80
     volumes:
-      - ./frontend/.cert/homeoffice:/etc/ssl/certs
-      #- ./frontend/.cert/office:/etc/ssl/certs
+      - ${CERT_PATH}:/etc/ssl/certs

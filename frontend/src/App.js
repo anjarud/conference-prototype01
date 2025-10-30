@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import WebcamWebRTC from './WebcamWebRTC';
+import VideoStreamClient from './VideoStreamClient';
 
 function App() {
     const [roomId, setRoomId] = useState('');
@@ -17,9 +17,9 @@ function App() {
     if (!connected) {
         return (
             <div>
-                <h1>WebRTC Video-Chat verbinden</h1>
-                <input placeholder="Raum-ID" value={roomId} onChange={e => setRoomId(e.target.value)} />
-                <input placeholder="Deine Client-ID (z.B. 1)" value={clientId} onChange={e => setClientId(e.target.value)} />
+                <h1>Video-Chat verbinden</h1>
+                <input placeholder="Raum-ID" value={roomId} onChange={e => setRoomId(e.target.value.trim())} />
+                <input placeholder="Deine Client-ID (z.B. 1)" value={clientId} onChange={e => setClientId(e.target.value.trim())} />
                 <button onClick={connect}>Verbinden</button>
             </div>
         );
@@ -27,8 +27,8 @@ function App() {
 
     return (
         <div>
-            <h1>WebRTC Video-Chat</h1>
-            <WebcamWebRTC roomId={roomId} clientId={clientId} />
+            <h1>Video-Chat</h1>
+            <VideoStreamClient roomId={roomId} clientId={clientId} />
         </div>
     );
 }

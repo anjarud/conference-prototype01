@@ -27,3 +27,10 @@ docker-compose.override.yml
 
 # Windows Systemdateien (optional)
 Thumbs.db
+
+# Python virtuelle Umgebung
+.venv/
+
+# Python Bytecode Cache
+__pycache__/
+*.py[cod]
